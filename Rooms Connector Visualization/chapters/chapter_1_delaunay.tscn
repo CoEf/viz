@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://chapters/chapter_1_delaunay.gd" id="1_script"]
+[ext_resource type="Script" path="res://rooms/dungeon_graph.gd" id="2_world"]
+
+[node name="Chapter1_delaunay" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="DungeonGraph" type="Node3D" parent="."]
+script = ExtResource("2_world")

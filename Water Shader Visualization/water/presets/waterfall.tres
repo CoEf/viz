@@ -1,0 +1,14 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3]
+
+[ext_resource type="Shader" path="res://water/water_curtain.gdshader" id="sh"]
+[ext_resource type="Texture2D" path="res://water/textures/noise_fall.tres" id="tf"]
+
+[resource]
+shader = ExtResource("sh")
+shader_parameter/fall_noise = ExtResource("tf")
+shader_parameter/water_color = Color(0.6, 0.85, 0.95, 1)
+shader_parameter/streak_bias = 0.24
+shader_parameter/streak_gain = 2.8
+shader_parameter/layer_scale_a = Vector2(1, 0.38)
+shader_parameter/layer_scale_b = Vector2(1.7, 0.85)
+shader_parameter/layer_scale_c = Vector2(2.4, 1.6)

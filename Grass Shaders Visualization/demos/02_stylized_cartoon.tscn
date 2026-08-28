@@ -1,0 +1,32 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/grass_plot.gd" id="plot"]
+[ext_resource type="ShaderMaterial" path="res://shaders/02_stylized_cartoon/mat_cartoon.tres" id="mat"]
+[ext_resource type="QuadMesh" path="res://assets/card_mesh.tres" id="mesh"]
+[ext_resource type="StandardMaterial3D" path="res://assets/ground_material.tres" id="ground"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+size = Vector2(13, 13)
+subdivide_width = 2
+subdivide_depth = 2
+; variant_count = 4 because `instance uniform` is per NODE. Four blade shapes
+; means four MultiMeshInstance3D nodes, not four instances.
+
+[node name="Demo02StylizedCartoon" type="Node3D"]
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_ground")
+material_override = ExtResource("ground")
+
+[node name="Grass" type="Node3D" parent="."]
+script = ExtResource("plot")
+grass_material = ExtResource("mat")
+grass_mesh = ExtResource("mesh")
+instance_count = 4000
+area = Vector2(11, 11)
+scale_min = 0.75
+scale_max = 1.3
+rng_seed = 20260826
+variant_count = 4
+cast_shadow = false
+world_position_uniform = "world_position"

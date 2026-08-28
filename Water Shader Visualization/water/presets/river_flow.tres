@@ -1,0 +1,24 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3]
+
+[ext_resource type="Shader" path="res://water/water_river.gdshader" id="sh"]
+[ext_resource type="Texture2D" path="res://water/textures/noise_normal.tres" id="tn"]
+[ext_resource type="Texture2D" path="res://water/textures/noise_foam.tres" id="tf"]
+
+[resource]
+shader = ExtResource("sh")
+shader_parameter/normal_map = ExtResource("tn")
+shader_parameter/foam_noise = ExtResource("tf")
+shader_parameter/wave_amplitude = 0.12
+shader_parameter/detail_scale = Vector2(0.09, 0.037)
+shader_parameter/flow_dir = Vector2(0, 1)
+shader_parameter/flow_speed = 0.34
+shader_parameter/flow_warp = 0.2
+shader_parameter/flow_foam = 1.1
+shader_parameter/flow_foam_depth = 1.0
+shader_parameter/flow_noise_scale = 0.02
+shader_parameter/flow_noise_turn = 1.1
+shader_parameter/foam_noise_scale = 0.5
+shader_parameter/foam_shore_depth = 0.55
+shader_parameter/absorption = Vector3(1.1, 0.75, 0.6)
+shader_parameter/scatter_color = Color(0.09, 0.16, 0.13, 1)
+shader_parameter/scatter_k = 0.5

@@ -1,0 +1,43 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="ShaderMaterial" path="res://shaders/08_clipmap_particles/mat_foliage_process.tres" id="proc"]
+[ext_resource type="ShaderMaterial" path="res://shaders/08_clipmap_particles/mat_clipmap_draw.tres" id="draw"]
+[ext_resource type="QuadMesh" path="res://assets/card_mesh.tres" id="mesh"]
+[ext_resource type="StandardMaterial3D" path="res://assets/ground_material.tres" id="ground"]
+[ext_resource type="Script" path="res://scripts/heightmap_terrain.gd" id="terrain"]
+[ext_resource type="Texture2D" path="res://assets/generated/heightmap.png" id="heightmap"]
+[ext_resource type="Script" path="res://scripts/clipmap_fade.gd" id="fade"]
+
+; 5184 = instance_rows^2 (72 x 72). The process shader lays particles out as a grid
+; indexed by INDEX, so `amount` and `instance_rows` have to agree or the last row is
+; missing / duplicated.
+; explosiveness = 1 emits every particle on the same frame: this is a static field
+; that happens to be built out of particles, not an emitter.
+
+[node name="Demo08ClipmapParticles" type="Node3D"]
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+material_override = ExtResource("ground")
+script = ExtResource("terrain")
+heightmap = ExtResource("heightmap")
+heightmap_scale = 0.35
+height_scale = 1.2
+size = Vector2(13, 13)
+subdivisions = 72
+
+[node name="Grass" type="GPUParticles3D" parent="."]
+material_override = ExtResource("draw")
+cast_shadow = 0
+custom_aabb = AABB(-9, -2, -9, 18, 10, 18)
+amount = 5184
+lifetime = 600.0
+explosiveness = 1.0
+fixed_fps = 0
+interpolate = false
+visibility_aabb = AABB(-9, -2, -9, 18, 10, 18)
+process_material = ExtResource("proc")
+draw_pass_1 = ExtResource("mesh")
+
+[node name="FadeAutoRange" type="Node3D" parent="."]
+script = ExtResource("fade")
+target_material = ExtResource("draw")

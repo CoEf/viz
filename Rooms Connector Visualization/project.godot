@@ -1,0 +1,35 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Rooms Connector Visualization"
+run/main_scene="res://addons/pipeline_viz/runner/walkthrough.tscn"
+config/features=PackedStringArray("4.7", "Forward Plus")
+config/icon="res://icon.svg"
+
+[display]
+
+window/size/viewport_width=1600
+window/size/viewport_height=900
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+; 커서가 큰 경우 기본 오프셋 (10, 10) 으로는 툴팁 첫 줄이 커서에 가린다.
+mouse_cursor/tooltip_position_offset=Vector2(24, 24)
+
+[gui]
+
+; 기본 0.5초는 코드 단어 위를 훑으며 뜻을 확인하기에 굼뜨다.
+timers/tooltip_delay_sec=0.2
+
+[rendering]
+
+rendering_device/driver.windows="d3d12"

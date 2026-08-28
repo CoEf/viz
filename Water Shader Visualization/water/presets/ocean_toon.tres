@@ -1,0 +1,18 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3]
+
+[ext_resource type="Shader" path="res://water/water_toon.gdshader" id="sh"]
+[ext_resource type="Texture2D" path="res://water/textures/noise_normal.tres" id="tn"]
+[ext_resource type="Texture2D" path="res://water/textures/noise_foam.tres" id="tf"]
+
+[resource]
+shader = ExtResource("sh")
+shader_parameter/normal_map = ExtResource("tn")
+shader_parameter/foam_noise = ExtResource("tf")
+shader_parameter/wave_amplitude = 0.9
+shader_parameter/foam_noise_scale = 0.26
+shader_parameter/toon_shallow = Color(0.47, 0.85, 0.88, 1)
+shader_parameter/toon_mid = Color(0.35, 0.7, 0.9, 1)
+shader_parameter/toon_deep = Color(0.2, 0.46, 0.79, 1)
+shader_parameter/toon_band0 = 1.1
+shader_parameter/toon_band1 = 4.0
+shader_parameter/toon_band_warp = 1.1

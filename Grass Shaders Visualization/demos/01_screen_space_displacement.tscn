@@ -1,0 +1,30 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/grass_plot.gd" id="plot"]
+[ext_resource type="ShaderMaterial" path="res://shaders/01_screen_space_displacement/mat_ssd.tres" id="mat"]
+[ext_resource type="QuadMesh" path="res://assets/card_wide.tres" id="mesh"]
+[ext_resource type="StandardMaterial3D" path="res://assets/ground_material.tres" id="ground"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+size = Vector2(13, 13)
+subdivide_width = 2
+subdivide_depth = 2
+; Wide cards: this shader bends by sliding the albedo UV sideways, and the extra
+; width is the room it has to slide into. On a 1x1 card the blade walks off its
+; own quad and the bend clips.
+
+[node name="Demo01ScreenSpaceDisplacement" type="Node3D"]
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_ground")
+material_override = ExtResource("ground")
+
+[node name="Grass" type="Node3D" parent="."]
+script = ExtResource("plot")
+grass_material = ExtResource("mat")
+grass_mesh = ExtResource("mesh")
+instance_count = 2400
+area = Vector2(11, 11)
+scale_min = 0.8
+scale_max = 1.35
+rng_seed = 20260826

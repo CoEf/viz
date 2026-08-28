@@ -1,0 +1,27 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/grass_plot.gd" id="plot"]
+[ext_resource type="ShaderMaterial" path="res://shaders/05_kiwio_grass/mat_kiwio.tres" id="mat"]
+[ext_resource type="ArrayMesh" path="res://assets/generated/blade_mesh.res" id="mesh"]
+[ext_resource type="StandardMaterial3D" path="res://assets/ground_material.tres" id="ground"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+size = Vector2(13, 13)
+subdivide_width = 2
+subdivide_depth = 2
+
+[node name="Demo05KiwioGrass" type="Node3D"]
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_ground")
+material_override = ExtResource("ground")
+
+[node name="Grass" type="Node3D" parent="."]
+script = ExtResource("plot")
+grass_material = ExtResource("mat")
+grass_mesh = ExtResource("mesh")
+instance_count = 4200
+area = Vector2(11, 11)
+scale_min = 0.8
+scale_max = 1.4
+rng_seed = 20260826

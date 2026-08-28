@@ -1,0 +1,39 @@
+[gd_resource type="ShaderMaterial" load_steps=6 format=3]
+
+[ext_resource type="Shader" path="res://shaders/01_screen_space_displacement/grass_ssd.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://assets/generated/card_albedo.png" id="2_albedo"]
+[ext_resource type="Texture2D" path="res://assets/generated/card_normal.png" id="3_normal"]
+[ext_resource type="Texture2D" path="res://assets/generated/wind_noise.png" id="4_wind"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/y_offset = 0.0
+shader_parameter/base_color = Color(0.5, 0.65, 0.4, 1)
+shader_parameter/end_color = Color(1, 1, 0.9, 1)
+shader_parameter/specular = 0.15
+shader_parameter/metallic = 0.0
+shader_parameter/roughness = 0.9
+shader_parameter/rim = 0.05
+shader_parameter/transmission = 0.35
+shader_parameter/texture_albedo = ExtResource("2_albedo")
+shader_parameter/texture_normal = ExtResource("3_normal")
+shader_parameter/texture_wind_noise = ExtResource("4_wind")
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+shader_parameter/wind_noise_scale = 1.4
+shader_parameter/wind_direction = Vector2(0.6, 0.8)
+shader_parameter/wind_speed = 4.0
+shader_parameter/wind_strength = 0.45
+shader_parameter/color_variatiion = 0.5
+shader_parameter/height = 1.0
+shader_parameter/height_variation = 0.3
+shader_parameter/flatness = 0.9
+shader_parameter/fade_out_distance = 120.0
+shader_parameter/fade_out_transition = 60.0
+shader_parameter/y_billboard = false
+shader_parameter/displace_intensity = 1.0
+shader_parameter/proximity_distance = 1.0
+shader_parameter/displace = true
+shader_parameter/alpha_scissors = 0.5
+shader_parameter/use_normal_map_alpha = false

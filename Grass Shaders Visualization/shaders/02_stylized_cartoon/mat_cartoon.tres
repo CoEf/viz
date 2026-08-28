@@ -1,0 +1,23 @@
+[gd_resource type="ShaderMaterial" load_steps=10 format=3]
+
+[ext_resource type="Shader" path="res://shaders/02_stylized_cartoon/grass_cartoon.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://assets/generated/grass_color_02.png" id="2_grass"]
+[ext_resource type="Texture2D" path="res://assets/generated/terrain_color_02.png" id="3_terrain"]
+[ext_resource type="Texture2D" path="res://assets/generated/gradient_mask_02.png" id="4_mask"]
+[ext_resource type="Texture2D" path="res://assets/generated/blade_detail_0.png" id="5_v0"]
+[ext_resource type="Texture2D" path="res://assets/generated/blade_detail_1.png" id="6_v1"]
+[ext_resource type="Texture2D" path="res://assets/generated/blade_detail_2.png" id="7_v2"]
+[ext_resource type="Texture2D" path="res://assets/generated/blade_detail_3.png" id="8_v3"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/enable_details = true
+shader_parameter/billboard_y = false
+shader_parameter/detail_color = Color(0.09, 0.16, 0.06, 1)
+shader_parameter/world_size = Vector2(26, 26)
+shader_parameter/world_position = Vector2(0.5, 0.5)
+shader_parameter/grass_color = ExtResource("2_grass")
+shader_parameter/terrain_color = ExtResource("3_terrain")
+shader_parameter/gradient_mask = ExtResource("4_mask")
+shader_parameter/variants = [ExtResource("5_v0"), ExtResource("6_v1"), ExtResource("7_v2"), ExtResource("8_v3")]

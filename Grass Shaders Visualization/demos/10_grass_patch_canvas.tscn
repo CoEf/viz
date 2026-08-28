@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/canvas_patch_demo.gd" id="demo"]
+[ext_resource type="Script" path="res://scripts/grass_patch_feed.gd" id="feed"]
+[ext_resource type="ShaderMaterial" path="res://shaders/10_grass_patch_canvas/mat_grass_patch.tres" id="mat"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+size = Vector2(13, 13)
+subdivide_width = 2
+subdivide_depth = 2
+
+; A canvas_item shader painted into a SubViewport and worn by the ground quad. No
+; blades exist at all - that is the comparison this patch is here to make.
+
+[node name="Demo10GrassPatchCanvas" type="Node3D"]
+script = ExtResource("demo")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+disable_3d = true
+transparent_bg = false
+size = Vector2i(768, 768)
+render_target_update_mode = 3
+
+[node name="Patch" type="ColorRect" parent="SubViewport"]
+material = ExtResource("mat")
+offset_right = 768.0
+offset_bottom = 768.0
+script = ExtResource("feed")
+pixels_per_unit = 48.0
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_ground")

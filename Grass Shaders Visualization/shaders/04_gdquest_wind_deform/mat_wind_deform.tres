@@ -1,0 +1,21 @@
+[gd_resource type="ShaderMaterial" load_steps=5 format=3]
+
+[ext_resource type="Shader" path="res://shaders/04_gdquest_wind_deform/grass_wind_deform.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://assets/generated/color_ramp_04.png" id="2_ramp"]
+[ext_resource type="Texture2D" path="res://assets/generated/wind_noise.png" id="3_wind"]
+[ext_resource type="Texture2D" path="res://assets/generated/falloff_curve_04.png" id="4_curve"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/wind_speed = 0.2
+shader_parameter/wind_strength = 0.32
+shader_parameter/wind_texture_tile_size = 20.0
+shader_parameter/wind_vertical_strength = 0.12
+shader_parameter/wind_horizontal_direction = Vector2(1, 0.5)
+shader_parameter/color_ramp = ExtResource("2_ramp")
+shader_parameter/wind_noise = ExtResource("3_wind")
+shader_parameter/character_position = Vector3(0, 0, 0)
+shader_parameter/character_radius = 2.6
+shader_parameter/character_distance_falloff_curve = ExtResource("4_curve")
+shader_parameter/character_push_strength = 0.9

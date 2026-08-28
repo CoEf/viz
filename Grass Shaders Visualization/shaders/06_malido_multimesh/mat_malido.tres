@@ -1,0 +1,19 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3]
+
+[ext_resource type="Shader" path="res://shaders/06_malido_multimesh/grass_malido.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://assets/generated/wind_noise.png" id="2_wind"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/top_color = Color(0.42, 0.69, 0.27, 1)
+shader_parameter/bottom_color = Color(0.18, 0.33, 0.09, 1)
+shader_parameter/ambient_occlusion_factor = 0.5
+shader_parameter/specular_strength = 0.4
+shader_parameter/player_displacement_strength = 0.5
+shader_parameter/player_displacement_size = 0.85
+shader_parameter/wind_direction = Vector3(0.4, -0.3, 0.81)
+shader_parameter/wind_strength = 0.4
+shader_parameter/wind_noise = ExtResource("2_wind")
+shader_parameter/wind_noise_size = 0.06
+shader_parameter/wind_noise_speed = 0.14

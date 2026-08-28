@@ -1,0 +1,11 @@
+[gd_resource type="QuadMesh" format=3]
+
+; Standard grass card: 1x1, pivot at the base, six horizontal cuts so vertex-shader
+; bending has something to bend. Godot's QuadMesh is a PlaneMesh with FACE_Z, so it
+; already stands upright and its UV.y is 0 at the top - which is what all ten shaders
+; assume.
+[resource]
+size = Vector2(1, 1)
+center_offset = Vector3(0, 0.5, 0)
+subdivide_width = 0
+subdivide_depth = 6

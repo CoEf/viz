@@ -1,0 +1,66 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://grass/grass_field.gd" id="1_field"]
+[ext_resource type="Script" path="res://addons/pipeline_viz/runner/orbit_camera.gd" id="2_orbit"]
+[ext_resource type="Script" path="res://scripts/walker.gd" id="3_walker"]
+
+[sub_resource type="ProceduralSkyMaterial" id="sky_mat"]
+sky_top_color = Color(0.29, 0.47, 0.78, 1)
+sky_horizon_color = Color(0.71, 0.78, 0.82, 1)
+ground_bottom_color = Color(0.29, 0.31, 0.26, 1)
+ground_horizon_color = Color(0.63, 0.67, 0.6, 1)
+sun_angle_max = 14.0
+sun_curve = 0.18
+
+[sub_resource type="Sky" id="sky"]
+sky_material = SubResource("sky_mat")
+
+[sub_resource type="Environment" id="env"]
+resource_local_to_scene = true
+background_mode = 2
+sky = SubResource("sky")
+ambient_light_source = 3
+ambient_light_sky_contribution = 1.0
+ambient_light_energy = 0.9
+tonemap_mode = 2
+tonemap_exposure = 1.0
+tonemap_white = 6.0
+ssao_enabled = false
+glow_enabled = false
+fog_enabled = false
+
+[sub_resource type="SphereMesh" id="walker_mesh"]
+radius = 0.42
+height = 0.84
+
+[node name="GrassField" type="Node3D"]
+script = ExtResource("1_field")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("env")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.642788, -0.492404, 0.586824, 0, 0.766044, 0.642788, -0.766044, -0.413176, 0.492404, 0, 12, 0)
+light_energy = 1.15
+shadow_enabled = true
+
+[node name="CameraRig" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+script = ExtResource("2_orbit")
+distance = 18.0
+min_distance = 3.0
+max_distance = 80.0
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 18)
+fov = 55.0
+near = 0.05
+
+[node name="Walker" type="Node3D" parent="."]
+script = ExtResource("3_walker")
+
+[node name="Body" type="MeshInstance3D" parent="Walker"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.42, 0)
+mesh = SubResource("walker_mesh")
+
+[node name="Plots" type="Node3D" parent="."]

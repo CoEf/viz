@@ -1,0 +1,38 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/grass_plot.gd" id="plot"]
+[ext_resource type="ShaderMaterial" path="res://shaders/07_clipmap_grass/mat_clipmap.tres" id="mat"]
+[ext_resource type="QuadMesh" path="res://assets/card_mesh.tres" id="mesh"]
+[ext_resource type="StandardMaterial3D" path="res://assets/ground_material.tres" id="ground"]
+[ext_resource type="Script" path="res://scripts/heightmap_terrain.gd" id="terrain"]
+[ext_resource type="Texture2D" path="res://assets/generated/heightmap.png" id="heightmap"]
+[ext_resource type="Script" path="res://scripts/clipmap_fade.gd" id="fade"]
+
+; The ground is rebuilt from the same heightmap the shader samples, so the blades sit
+; on the hill instead of hovering over a flat plane.
+
+[node name="Demo07ClipmapGrass" type="Node3D"]
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+material_override = ExtResource("ground")
+script = ExtResource("terrain")
+heightmap = ExtResource("heightmap")
+heightmap_scale = 0.35
+height_scale = 1.2
+size = Vector2(13, 13)
+subdivisions = 72
+
+[node name="Grass" type="Node3D" parent="."]
+script = ExtResource("plot")
+grass_material = ExtResource("mat")
+grass_mesh = ExtResource("mesh")
+instance_count = 3200
+area = Vector2(11, 11)
+scale_min = 0.75
+scale_max = 1.3
+rng_seed = 20260826
+cast_shadow = false
+
+[node name="FadeAutoRange" type="Node3D" parent="."]
+script = ExtResource("fade")
+target_material = ExtResource("mat")

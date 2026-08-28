@@ -1,0 +1,18 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://shaders/10_grass_patch_canvas/grass_patch.gdshader" id="1_shader"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/color_base = Color(0.16, 0.36, 0.11, 1)
+shader_parameter/color_highlight = Color(0.55, 0.79, 0.29, 1)
+shader_parameter/color_variation = 0.55
+shader_parameter/noise_scale = 26.0
+shader_parameter/detail_scale = 95.0
+shader_parameter/detail_strength = 0.35
+shader_parameter/wind_speed = 1.4
+shader_parameter/wind_strength = 0.02
+shader_parameter/wind_direction = Vector2(1, 0.3)
+shader_parameter/camera_world_pos = Vector2(0, 0)
+shader_parameter/camera_zoom = 1.0

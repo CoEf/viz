@@ -1,0 +1,190 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://addons/pipeline_viz/runner/walkthrough.gd" id="1_main"]
+[ext_resource type="Script" path="res://addons/pipeline_viz/ui/code_label.gd" id="2_code"]
+
+[node name="Main" type="Control" unique_id=416627714]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_main")
+
+[node name="Root" type="VBoxContainer" parent="." unique_id=1235898861]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="Body" type="HBoxContainer" parent="Root" unique_id=2139525309]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="ViewportFrame" type="SubViewportContainer" parent="Root/Body" unique_id=821361300]
+layout_mode = 2
+size_flags_horizontal = 3
+stretch = true
+
+[node name="World" type="SubViewport" parent="Root/Body/ViewportFrame" unique_id=857549799]
+unique_name_in_owner = true
+own_world_3d = true
+handle_input_locally = false
+size = Vector2i(1150, 837)
+render_target_update_mode = 4
+
+[node name="PanelMargin" type="MarginContainer" parent="Root/Body" unique_id=342537647]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 4
+
+[node name="SidePanel" type="PanelContainer" parent="Root/Body/PanelMargin" unique_id=1266028161]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(430, 0)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="Root/Body/PanelMargin/SidePanel" unique_id=1125994200]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 16
+
+[node name="Scroll" type="ScrollContainer" parent="Root/Body/PanelMargin/SidePanel/Margin" unique_id=1292417438]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="VBox" type="VBoxContainer" parent="Root/Body/PanelMargin/SidePanel/Margin/Scroll" unique_id=135965174]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="ChapterTitle" type="Label" parent="Root/Body/PanelMargin/SidePanel/Margin/Scroll/VBox" unique_id=640541275]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "챕터"
+autowrap_mode = 3
+
+[node name="StepHeader" type="HBoxContainer" parent="Root/Body/PanelMargin/SidePanel/Margin/Scroll/VBox" unique_id=694190809]
+layout_mode = 2
+
+[node name="PrevStepButton" type="Button" parent="Root/Body/PanelMargin/SidePanel/Margin/Scroll/VBox/StepHeader" unique_id=887931642]
+unique_name_in_owner = true
+layout_mode = 2
+text = "◀ 이전"
+
+[node name="StepIndicator" type="Label" parent="Root/Body/PanelMargin/SidePanel/Margin/Scroll/VBox/StepHeader" unique_id=179430118]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "1 / 1"
+horizontal_alignment = 1
+
+[node name="NextStepButton" type="Button" parent="Root/Body/PanelMargin/SidePanel/Margin/Scroll/VBox/StepHeader" unique_id=755579968]
+unique_name_in_owner = true
+layout_mode = 2
+text = "다음 ▶"
+
+[node name="StepTitle" type="Label" parent="Root/Body/PanelMargin/SidePanel/Margin/Scroll/VBox" unique_id=20372817]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "스텝"
+autowrap_mode = 3
+
+[node name="StepBody" type="RichTextLabel" parent="Root/Body/PanelMargin/SidePanel/Margin/Scroll/VBox" unique_id=964691218]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="ChipsRow" type="HFlowContainer" parent="Root/Body/PanelMargin/SidePanel/Margin/Scroll/VBox" unique_id=404306697]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 6
+
+[node name="CodePanel" type="PanelContainer" parent="Root/Body/PanelMargin/SidePanel/Margin/Scroll/VBox" unique_id=1560602265]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CodeLabel" type="RichTextLabel" parent="Root/Body/PanelMargin/SidePanel/Margin/Scroll/VBox/CodePanel" unique_id=1130155399]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+script = ExtResource("2_code")
+
+[node name="TryLine" type="Label" parent="Root/Body/PanelMargin/SidePanel/Margin/Scroll/VBox" unique_id=839672231]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+autowrap_mode = 3
+
+[node name="PanelDivider" type="HSeparator" parent="Root/Body/PanelMargin/SidePanel/Margin/Scroll/VBox" unique_id=1806932398]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="PanelHint" type="Label" parent="Root/Body/PanelMargin/SidePanel/Margin/Scroll/VBox" unique_id=1477203355]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "이 페이지에서 조정할 수 있는 값"
+autowrap_mode = 3
+
+[node name="ChapterPanel" type="VBoxContainer" parent="Root/Body/PanelMargin/SidePanel/Margin/Scroll/VBox" unique_id=426428544]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BottomMarginWrap" type="MarginContainer" parent="Root" unique_id=1112964436]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="BottomBar" type="PanelContainer" parent="Root/BottomMarginWrap" unique_id=2015291995]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="BottomMargin" type="MarginContainer" parent="Root/BottomMarginWrap/BottomBar" unique_id=750349442]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="HBox" type="HBoxContainer" parent="Root/BottomMarginWrap/BottomBar/BottomMargin" unique_id=1274330970]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="PrevChapterButton" type="Button" parent="Root/BottomMarginWrap/BottomBar/BottomMargin/HBox" unique_id=911846044]
+unique_name_in_owner = true
+layout_mode = 2
+text = "◀ 이전 챕터"
+
+[node name="ChapterIndicator" type="Label" parent="Root/BottomMarginWrap/BottomBar/BottomMargin/HBox" unique_id=644796454]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "챕터 0 / 6"
+horizontal_alignment = 1
+
+[node name="NextChapterButton" type="Button" parent="Root/BottomMarginWrap/BottomBar/BottomMargin/HBox" unique_id=759133334]
+unique_name_in_owner = true
+layout_mode = 2
+text = "다음 챕터 ▶"

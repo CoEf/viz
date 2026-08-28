@@ -1,0 +1,98 @@
+name: Build and deploy to GitHub Pages
+
+# 목적: 소스만 커밋하고 빌드는 여기서 만든다.
+# 39 MB짜리 wasm을 저장소 히스토리에 쌓지 않으려는 것이 전부다 — 챕터 한 줄을
+# 고칠 때마다 커밋되면 히스토리가 그만큼 영구히 무거워진다.
+#
+# 곁가지로 얻는 게 하나 더 있다. "에디터에서는 되는데 내보내면 깨지는" 종류의
+# 버그가 push마다 걸린다. 실제로 챕터 스캔(.tscn → .tscn.remap), 폰트
+# 로딩(원본 ttf가 pck에 없음), fma() 셰이더 세 가지가 전부 그 종류였다.
+# build_web.py가 ERROR/SHADER ERROR 한 줄만 나와도 멈춘다.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 배포는 한 번에 하나만. 연달아 push했을 때 앞선 실행이 뒤엣것을 덮어쓰지
+# 않도록 한다. 다만 진행 중인 것을 죽이지는 않는다 — Godot 내보내기가
+# 중간에 잘리면 절반짜리 산출물이 그대로 올라갈 수 있다.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  GODOT_VERSION: 4.7-stable
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # 에디터 바이너리와 익스포트 템플릿을 합쳐 1.4 GB쯤 받는다. 엔진
+      # 버전이 그대로면 매번 받을 이유가 없으므로 캐시에 얹는다.
+      # 키에 버전이 들어 있어서, project.godot의 엔진을 올리고 여기 env를
+      # 같이 고치면 캐시는 자동으로 갈린다.
+      - name: Cache Godot ${{ env.GODOT_VERSION }}
+        id: godot-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/godot
+            ~/.local/share/godot/export_templates
+          key: godot-${{ env.GODOT_VERSION }}-linux
+
+      - name: Download Godot and export templates
+        if: steps.godot-cache.outputs.cache-hit != 'true'
+        run: |
+          set -euo pipefail
+          base="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}"
+          name="Godot_v${GODOT_VERSION}_linux.x86_64"
+
+          mkdir -p ~/godot
+          curl -fsSL -o /tmp/godot.zip "${base}/${name}.zip"
+          unzip -q /tmp/godot.zip -d ~/godot
+          mv ~/godot/"${name}" ~/godot/godot
+          chmod +x ~/godot/godot
+
+          # 템플릿은 tpz(zip) 안의 templates/ 아래에 들어 있고, Godot은
+          # export_templates/<버전>/ 에 펼쳐진 상태를 기대한다. 웹 빌드만
+          # 만들므로 web_*만 꺼낸다 — 1.2 GB에서 80 MB로 줄어든다.
+          # version.txt가 없으면 Godot이 템플릿을 아예 못 알아본다.
+          curl -fsSL -o /tmp/templates.tpz "${base}/Godot_v${GODOT_VERSION}_export_templates.tpz"
+          dest=~/.local/share/godot/export_templates/"${GODOT_VERSION/-/.}"
+          mkdir -p "$dest"
+          unzip -q -o -j /tmp/templates.tpz 'templates/version.txt' 'templates/web_*.zip' -d "$dest"
+
+      - name: Build
+        run: python tools/build_web.py --godot ~/godot/godot --out _out/viz
+
+      # 아티팩트의 루트가 곧 이 사이트의 루트(…/viz/)가 된다. 그래서 _out이
+      # 아니라 _out/viz를 넘긴다 — _out을 넘기면 주소가 …/viz/viz/ 가 된다.
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _out/viz
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

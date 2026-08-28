@@ -1,0 +1,10 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3]
+
+[ext_resource type="Shader" path="res://shaders/09_pixel_wind_sway/pixel_wind_sway.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://assets/generated/pixel_tuft.png" id="2_tuft"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/grass_texture = ExtResource("2_tuft")
+shader_parameter/alpha_scissor = 0.5

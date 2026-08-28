@@ -1,0 +1,23 @@
+[gd_resource type="ShaderMaterial" load_steps=5 format=3]
+
+[ext_resource type="Shader" path="res://shaders/08_clipmap_particles/foliage_process.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://assets/generated/heightmap.png" id="2_height"]
+[ext_resource type="Texture2D" path="res://assets/generated/heightmap_normals.png" id="3_hnorm"]
+[ext_resource type="Texture2D" path="res://assets/generated/foliage_map.png" id="4_density"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/instance_rows = 72
+shader_parameter/instance_spacing = 0.17
+shader_parameter/density_adjust = 1.0
+shader_parameter/orient_to_normal = false
+shader_parameter/orient_up_with_normal = true
+shader_parameter/random_spacing = 0.075
+shader_parameter/min_scale = Vector3(0.8, 0.7, 0.8)
+shader_parameter/max_scale = Vector3(1.2, 1.35, 1.2)
+shader_parameter/heightmap = ExtResource("2_height")
+shader_parameter/heightmap_normals = ExtResource("3_hnorm")
+shader_parameter/foliage_map = ExtResource("4_density")
+shader_parameter/heightmap_scale = 0.35
+shader_parameter/heightmap_height_scale = 1.2

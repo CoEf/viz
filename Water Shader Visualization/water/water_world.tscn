@@ -1,0 +1,133 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://water/water_world.gd" id="1_world"]
+[ext_resource type="Script" path="res://addons/pipeline_viz/runner/orbit_camera.gd" id="2_orbit"]
+[ext_resource type="Shader" path="res://water/water_surface.gdshader" id="3_shader"]
+
+[sub_resource type="ProceduralSkyMaterial" id="sky_mat"]
+sky_top_color = Color(0.24, 0.45, 0.78, 1)
+sky_horizon_color = Color(0.72, 0.82, 0.9, 1)
+ground_bottom_color = Color(0.33, 0.36, 0.4, 1)
+ground_horizon_color = Color(0.72, 0.82, 0.9, 1)
+sun_angle_max = 8.0
+sun_curve = 0.12
+
+[sub_resource type="Sky" id="sky"]
+sky_material = SubResource("sky_mat")
+
+[sub_resource type="Environment" id="env"]
+resource_local_to_scene = true
+background_mode = 2
+sky = SubResource("sky")
+ambient_light_source = 3
+reflected_light_source = 2
+tonemap_mode = 3
+tonemap_exposure = 0.85
+
+[sub_resource type="StandardMaterial3D" id="m_sand"]
+albedo_color = Color(0.62, 0.55, 0.41, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="m_rock"]
+albedo_color = Color(0.4, 0.4, 0.43, 1)
+roughness = 0.85
+
+[sub_resource type="FastNoiseLite" id="fnl_normal"]
+frequency = 0.014
+fractal_octaves = 4
+
+[sub_resource type="NoiseTexture2D" id="tex_normal"]
+width = 512
+height = 512
+generate_mipmaps = true
+seamless = true
+as_normal_map = true
+bump_strength = 5.0
+noise = SubResource("fnl_normal")
+
+[sub_resource type="FastNoiseLite" id="fnl_foam"]
+frequency = 0.03
+fractal_octaves = 3
+
+[sub_resource type="NoiseTexture2D" id="tex_foam"]
+width = 512
+height = 512
+generate_mipmaps = true
+seamless = true
+noise = SubResource("fnl_foam")
+
+[sub_resource type="ShaderMaterial" id="mat_water"]
+resource_local_to_scene = true
+shader = ExtResource("3_shader")
+shader_parameter/normal_map = SubResource("tex_normal")
+shader_parameter/foam_noise = SubResource("tex_foam")
+shader_parameter/shoal_depth = 9.0
+shader_parameter/shoal_swell = 1.3
+shader_parameter/shoal_slow = 0.6
+shader_parameter/shoal_break = 0.7
+shader_parameter/shoal_flatten = 0.96
+shader_parameter/shoal_foam = 1.4
+shader_parameter/debug_view = 0
+
+[sub_resource type="PlaneMesh" id="plane_water"]
+size = Vector2(260, 260)
+subdivide_width = 380
+subdivide_depth = 380
+
+[node name="WaterWorld" type="Node3D"]
+script = ExtResource("1_world")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("env")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.573576, -0.469846, 0.671010, 0, 0.819152, 0.573576, -0.819152, 0.328990, -0.469846, 0, 20, 0)
+light_energy = 1.0
+shadow_enabled = true
+
+[node name="CameraRig" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+script = ExtResource("2_orbit")
+distance = 34.0
+min_distance = 3.0
+max_distance = 90.0
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 34)
+fov = 60.0
+near = 0.05
+
+[node name="Seabed" type="Node3D" parent="."]
+
+[node name="Slope" type="CSGBox3D" parent="Seabed"]
+transform = Transform3D(1, 0, 0, 0, 0.996547, 0.0830585, 0, -0.0830585, 0.996547, 0, -17.948, 1.246)
+use_collision = true
+size = Vector3(300, 30, 200)
+material = SubResource("m_sand")
+
+[node name="Props" type="Node3D" parent="."]
+
+[node name="Pillar0" type="CSGCylinder3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 3.3, 20)
+radius = 1.2
+height = 9.0
+sides = 20
+material = SubResource("m_rock")
+
+[node name="Pillar1" type="CSGCylinder3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 1.95, 4)
+radius = 1.0
+height = 9.0
+sides = 20
+material = SubResource("m_rock")
+
+[node name="Pillar2" type="CSGCylinder3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, 0.45, -14)
+radius = 1.4
+height = 9.0
+sides = 20
+material = SubResource("m_rock")
+
+[node name="Water" type="MeshInstance3D" parent="."]
+material_override = SubResource("mat_water")
+mesh = SubResource("plane_water")

@@ -1,0 +1,24 @@
+[gd_resource type="ShaderMaterial" load_steps=7 format=3]
+
+[ext_resource type="Shader" path="res://shaders/03_billboard_wind/grass_billboard.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://assets/generated/blade_mask_0.png" id="2_shape"]
+[ext_resource type="Texture2D" path="res://assets/generated/blade_atlas.png" id="3_atlas"]
+[ext_resource type="Texture2D" path="res://assets/generated/color_noise.png" id="4_noise"]
+[ext_resource type="Texture2D" path="res://assets/generated/color_gradient_03.png" id="5_grad"]
+[ext_resource type="Texture2D" path="res://assets/generated/wind_noise.png" id="6_wind"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/billboard = false
+shader_parameter/shape_texture = ExtResource("2_shape")
+shader_parameter/shape_atlas = ExtResource("3_atlas")
+shader_parameter/use_atlas = true
+shader_parameter/noise_texture = ExtResource("4_noise")
+shader_parameter/color_gradient = ExtResource("5_grad")
+shader_parameter/random_variation = 0.02
+shader_parameter/wind_texture = ExtResource("6_wind")
+shader_parameter/wind_velocity = Vector2(1.6, 0.9)
+shader_parameter/alpha_cut_start = 0.1
+shader_parameter/alpha_cut_end = 0.9
+shader_parameter/alpha_mode = 1

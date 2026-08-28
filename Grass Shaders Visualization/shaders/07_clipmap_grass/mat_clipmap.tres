@@ -1,0 +1,30 @@
+[gd_resource type="ShaderMaterial" load_steps=6 format=3]
+
+[ext_resource type="Shader" path="res://shaders/07_clipmap_grass/grass_clipmap.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://assets/generated/blade_mask_1.png" id="2_foliage"]
+[ext_resource type="Texture2D" path="res://assets/generated/heightmap_normals.png" id="3_hnorm"]
+[ext_resource type="Texture2D" path="res://assets/generated/color_noise.png" id="4_cnoise"]
+[ext_resource type="Texture2D" path="res://assets/generated/wind_noise.png" id="5_wind"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/specular = 0.2
+shader_parameter/roughness = 0.85
+shader_parameter/metallic = 0.0
+shader_parameter/fadeout_envelope = Vector2(16, 26)
+shader_parameter/top_color = Color(0.66, 0.85, 0.36, 1)
+shader_parameter/bottom_color = Color(0.16, 0.32, 0.12, 1)
+shader_parameter/noise_color = Color(0.76, 0.72, 0.31, 1)
+shader_parameter/foliage_texture = ExtResource("2_foliage")
+shader_parameter/heightmap_normals = ExtResource("3_hnorm")
+shader_parameter/heightmap_scale = 0.35
+shader_parameter/color_noise = ExtResource("4_cnoise")
+shader_parameter/color_noise_scale = 3.0
+shader_parameter/color_noise_intensity = 0.5
+shader_parameter/wind = true
+shader_parameter/wind_noise = ExtResource("5_wind")
+shader_parameter/wind_scale = 2.0
+shader_parameter/wind_intensity = 0.28
+shader_parameter/wind_speed = 0.02
+shader_parameter/wind_darken = 0.35

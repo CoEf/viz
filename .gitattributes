@@ -1,0 +1,33 @@
+# 줄바꿈 정책
+#
+# 로컬 core.autocrlf=true가 지금은 이걸 흡수하고 있지만, 그건 이 기기의
+# 설정일 뿐 저장소의 약속이 아니다. CI는 우분투에서 돌고, 거기서는 줄바꿈만
+# 바뀐 diff가 통째로 뜨거나 스크립트가 엉뚱하게 읽힌다. 그래서 못을 박는다.
+* text=auto
+
+# Godot 소스는 작업 트리에서도 LF로 고정한다. 엔진·에디터·python 스크립트가
+# 전부 LF로 쓰고 읽는다.
+*.gd text eol=lf
+*.gdshader text eol=lf
+*.gdshaderinc text eol=lf
+*.tscn text eol=lf
+*.tres text eol=lf
+*.godot text eol=lf
+*.cfg text eol=lf
+*.import text eol=lf
+*.uid text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+
+# 미디어·폰트는 손대지 않는다.
+*.png binary
+*.jpg binary
+*.webp binary
+*.ttf binary
+*.otf binary
+*.exr binary
+*.hdr binary

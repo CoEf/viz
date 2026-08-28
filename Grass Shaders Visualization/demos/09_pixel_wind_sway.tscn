@@ -1,0 +1,30 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/pixel_tuft_field.gd" id="field"]
+[ext_resource type="ShaderMaterial" path="res://shaders/09_pixel_wind_sway/mat_pixel.tres" id="mat"]
+[ext_resource type="QuadMesh" path="res://assets/card_pixel.tres" id="mesh"]
+[ext_resource type="StandardMaterial3D" path="res://assets/ground_material.tres" id="ground"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+size = Vector2(13, 13)
+subdivide_width = 2
+subdivide_depth = 2
+
+; Individual MeshInstance3D nodes, not a MultiMesh: this shader varies its phase with
+; NODE_POSITION_WORLD, which is per node. 260 tufts here against 3-4k blades elsewhere
+; is the honest cost of that.
+
+[node name="Demo09PixelWindSway" type="Node3D"]
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_ground")
+material_override = ExtResource("ground")
+
+[node name="Grass" type="Node3D" parent="."]
+script = ExtResource("field")
+tuft_material = ExtResource("mat")
+tuft_mesh = ExtResource("mesh")
+count = 300
+area = Vector2(11, 11)
+scale_min = 0.9
+scale_max = 1.6
