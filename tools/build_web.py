@@ -25,7 +25,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 import re
 import shutil
 import subprocess
@@ -143,32 +142,6 @@ def shell_html(source: Path, slug: str, pck_size: int, wasm_size: int) -> str:
                   "const GODOT_CONFIG = " + json.dumps(config) + ";", html)
 
 
-# 내용이 같은 파일에 늘 같은 시각을 박기 위한 기준점. 2015-01-01 UTC에서
-# 10년 폭 안으로 떨어뜨린다 — 전부 과거라 미래 날짜로 헷갈릴 일이 없다.
-MTIME_EPOCH = 1420070400
-MTIME_SPAN = 10 * 365 * 24 * 3600
-
-
-def pin_mtimes(out: Path) -> None:
-    """파일의 수정 시각을 내용에서 결정적으로 뽑아 박는다.
-
-    GitHub Pages는 ETag를 `"<hex mtime>-<hex size>"`로 만든다(nginx 기본값).
-    빌드는 매번 파일을 새로 쓰므로 내용이 같아도 mtime이 달라지고, 그러면
-    배포할 때마다 방문자 캐시의 39 MB 엔진이 통째로 무효가 된다. 실제로
-    챕터 한 줄만 고쳐 배포한 뒤 옛 ETag로 조건부 요청을 넣으면 304가 아니라
-    200에 10.2 MB가 그대로 돌아왔다.
-
-    그래서 시각을 시계가 아니라 내용에서 뽑는다. 엔진은 엔진이 바뀔 때만,
-    pck는 그 프로젝트가 바뀔 때만 ETag가 움직인다 — 한 프로젝트만 고쳐
-    배포해도 나머지 넷과 엔진은 방문자 캐시에 그대로 남는다.
-    """
-    for path in sorted(out.rglob("*")):
-        if not path.is_file():
-            continue
-        stamp = MTIME_EPOCH + int(sha256(path)[:8], 16) % MTIME_SPAN
-        os.utime(path, (stamp, stamp))
-
-
 def landing(out: Path) -> None:
     """…/viz/ 로 곧장 들어온 사람을 위한 목차. 블로그는 각 슬러그를 직접 문다."""
     cards = "\n".join(
@@ -280,8 +253,6 @@ def main() -> None:
     # Actions로 배포할 때는 Jekyll이 돌지 않지만, 브랜치 배포로 바꾸는 순간
     # 조용히 깨지는 자리라 못을 박아 둔다.
     (out / ".nojekyll").touch()
-
-    pin_mtimes(out)
 
     shutil.rmtree(staging, ignore_errors=True)
 
