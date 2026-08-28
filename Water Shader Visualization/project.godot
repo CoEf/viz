@@ -11,10 +11,10 @@ config_version=5
 [application]
 
 config/name="Water Shader Visualization"
+config/tags=PackedStringArray("visualization")
 run/main_scene="res://addons/pipeline_viz/runner/walkthrough.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
-config/tags=PackedStringArray("visualization")
 
 [display]
 
@@ -34,3 +34,5 @@ timers/tooltip_delay_sec=0.2
 [rendering]
 
 rendering_device/driver.windows="d3d12"
+2d/snap/snap_2d_transforms_to_pixel=true
+2d/snap/snap_2d_vertices_to_pixel=true

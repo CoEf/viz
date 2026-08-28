@@ -53,6 +53,8 @@ func _ready() -> void:
 	# 걸어 두지 않으면 코드 용어 힌트만 기본 회색 상자로 뜬다.
 	get_window().theme = theme
 	RenderingServer.set_default_clear_color(AppTheme.BG_WINDOW)
+	get_window().size_changed.connect(_sync_viewport_density)
+	_sync_viewport_density.call_deferred()
 	_style_step_card()
 	_prev_step_button.pressed.connect(_on_prev_step_pressed)
 	_next_step_button.pressed.connect(_on_next_step_pressed)
@@ -66,6 +68,24 @@ func _ready() -> void:
 		if tour_index + 1 < args.size():
 			directory = args[tour_index + 1]
 		_run_tour.call_deferred(directory)
+
+
+## 3D 칸의 해상도를 창의 실제 픽셀에 맞춘다.
+##
+## stretch/mode=canvas_items라 창이 1600x900이 아니면 2D 전체에 배율이 걸린다.
+## 글자는 4.5부터 그 배율로 글리프를 다시 래스터라이즈하므로 알아서 살아나지만,
+## SubViewport는 다르다 — 캔버스 단위(1600x900 기준)로 크기가 잡히고, 화면에는
+## 그 그림을 배율만큼 늘려 붙인다. 1920x1032 창이면 1224x836으로 그린 3D를
+## 1404x959로 펴 바르는 셈이라, 화면의 절반이 통째로 한 겹 흐려진다.
+##
+## scaling_3d_scale은 SubViewport 내부 3D 렌더 타깃에만 걸리는 배율이라,
+## 컨테이너가 강제하는 size를 건드리지 않고 실제 픽셀 수만 되돌릴 수 있다.
+## 엔진 상한이 2.0이고, 그 위(4K 등)에서는 조금 덜 채운 채로 둔다 —
+## 넘겨 봐야 무시되고, 3D 픽셀 수는 배율의 제곱으로 늘기 때문이다.
+func _sync_viewport_density() -> void:
+	var canvas_scale := get_window().get_final_transform().get_scale()
+	_viewport.scaling_3d_scale = clampf(
+			maxf(canvas_scale.x, canvas_scale.y), 1.0, 2.0)
 
 
 func _style_step_card() -> void:
