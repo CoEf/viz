@@ -46,7 +46,10 @@ static func build() -> Theme:
 ## 앱 안에서 저 혼자 튄다. 여기 칠해 두면 다른 카드와 같은 얼굴이 된다.
 static func _style_tooltip(theme: Theme) -> void:
 	var panel := card_style(10)
-	panel.bg_color = BG_CONTROL
+	# 카드 색(BG_CARD)이나 컨트롤 색(BG_CONTROL)을 깔면 글자와의 밝기차가
+	# 사이드 패널 본문보다 크게 묽어져 글자가 흐려 보인다. 코드 칸과 같은
+	# 어두운 바탕을 깔아 대비를 벌어 준다 — 어차피 코드에 붙는 설명이다.
+	panel.bg_color = BG_CODE
 	panel.set_border_width_all(1)
 	panel.border_color = Color(1.0, 1.0, 1.0, 0.10)
 	panel.content_margin_left = 12.0

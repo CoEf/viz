@@ -48,10 +48,9 @@ func _ready() -> void:
 	if _chapter_scenes.is_empty():
 		push_error("pipeline_viz: %s 에 chapter_*.tscn 이 없습니다" % chapters_dir)
 		return
+	# 툴팁 팝업은 창이 아니라 툴팁을 띄운 Control의 자식으로 붙는다. 그래서
+	# 이 테마 하나가 코드 용어 힌트에도 그대로 내려간다.
 	theme = AppTheme.build()
-	# 툴팁 팝업은 이 Control이 아니라 창에 붙어서 뜬다. 창에도 같은 테마를
-	# 걸어 두지 않으면 코드 용어 힌트만 기본 회색 상자로 뜬다.
-	get_window().theme = theme
 	RenderingServer.set_default_clear_color(AppTheme.BG_WINDOW)
 	get_window().size_changed.connect(_sync_viewport_density)
 	_sync_viewport_density.call_deferred()
@@ -97,6 +96,14 @@ func _style_step_card() -> void:
 	_chapter_title.add_theme_color_override("font_color", AppTheme.TEXT_DIM)
 	_step_title.add_theme_font_override("font", AppTheme.emboldened(theme.default_font, 0.5))
 	_step_title.add_theme_font_size_override("font_size", 23)
+	# 본문은 이 앱에서 제일 오래 읽는 글이다. 테마 기본값(15)보다 한 단 키운다.
+	# [b] 태그가 걸린 부분도 같이 커지도록 굵은 쪽 크기까지 함께 지정한다.
+	_step_body.add_theme_font_size_override("normal_font_size", 16)
+	_step_body.add_theme_font_size_override("bold_font_size", 16)
+	# RichTextLabel은 줄 간격 기본값이 0이라 한글 본문이 답답하게 붙는다.
+	_step_body.add_theme_constant_override("line_separation", 5)
+	# 코드는 본문보다 덜 벌린다 — 너무 벌리면 한 덩어리로 안 읽힌다.
+	_code_label.add_theme_constant_override("line_separation", 3)
 	_step_title.add_theme_color_override("font_color", Color.WHITE)
 	_code_label.add_theme_font_override("normal_font", AppTheme.mono_font())
 	_code_label.add_theme_font_size_override("normal_font_size", 13)

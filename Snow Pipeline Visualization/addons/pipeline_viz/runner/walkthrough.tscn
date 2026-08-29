@@ -1,7 +1,7 @@
-[gd_scene format=3 uid="uid://biu71v8gij6ql"]
+[gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://b843yx58pj6ix" path="res://addons/pipeline_viz/runner/walkthrough.gd" id="1_main"]
-[ext_resource type="Script" uid="uid://cbg6w38c1a4l2" path="res://addons/pipeline_viz/ui/code_label.gd" id="2_code"]
+[ext_resource type="Script" path="res://addons/pipeline_viz/runner/walkthrough.gd" id="1_main"]
+[ext_resource type="Script" path="res://addons/pipeline_viz/ui/code_label.gd" id="2_code"]
 
 [node name="Main" type="Control" unique_id=416627714]
 layout_mode = 3

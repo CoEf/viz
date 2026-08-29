@@ -8,7 +8,7 @@ extends RefCounted
 ## 프로젝트가 정한 uniform은 넣지 않는다(그건 스텝 본문이 설명할 몫이다).
 ## 설명이 서너 줄을 넘어가면 그것도 스텝 본문으로 갈 내용이다.
 ##
-## GLSL 함수 21 + 셰이더 내장 변수 26 + Godot API 29 + 프로퍼티 27 + 키워드 18.
+## GLSL 함수 21 + 셰이더 내장 변수 26 + Godot API 38 + 프로퍼티 28 + 키워드 18.
 ##
 ## 항목마다 kind가 붙는다 — 그 단어가 문법적으로 무엇인지(function·type·keyword·
 ## property)이고, 화면 색은 여기서 나온다. 사전에 있다는 사실 자체는 색으로
@@ -39,7 +39,7 @@ const TERMS := {
 	"step": {
 		"kind": "function",
 		"sig": "step(edge, x) -> float",
-		"desc": "x가 edge보다 작으면 0, 아니면 1.\n칼같이 둘 중 하나다.\n경계를 부드럽게 하려면 smoothstep.",
+		"desc": "x가 edge보다 작으면 0, 아니면 1.\n칼같이 둘 중 하나다. 경계를 부드럽게 하려면 smoothstep.\n점(.) 뒤에 붙은 step은 이 함수가 아니라 그 객체의 메서드다.",
 	},
 	"clamp": {
 		"kind": "function",
@@ -330,6 +330,51 @@ const TERMS := {
 		"sig": "rad_to_deg(라디안) -> float",
 		"desc": "라디안을 도로 바꾼다.\n삼각함수는 라디안으로 답하는데 사람은 도로 읽으니,\n마지막에 한 번 씌운다.",
 	},
+	"Quaternion": {
+		"kind": "type",
+		"sig": "Quaternion(from, to) — 타입·생성자",
+		"desc": "회전을 담는 타입. 두 방향 벡터로 만들면\nfrom을 to로 돌리는 최단 회전이 나온다.\n'rest 방향 → 파티클 방향'이 곧 본 회전이 되는 원리.",
+	},
+	"add_bone": {
+		"kind": "function",
+		"sig": "Skeleton3D.add_bone(이름) -> int",
+		"desc": "스켈레톤에 본을 하나 추가하고 번호를 돌려준다.\n부모와 rest 자세는 set_bone_parent·set_bone_rest로\n따로 정한다 — 셋이 모여야 본 하나가 완성된다.",
+	},
+	"create_skin_from_rest_transforms": {
+		"kind": "function",
+		"sig": "Skeleton3D.create_skin_from_rest_transforms() -> Skin",
+		"desc": "메시의 본 번호를 이 스켈레톤에 잇는 다리(Skin)를\nrest 자세 기준으로 만든다.\n그래서 메시도 rest 자세로 만들어 둬야 아귀가 맞는다.",
+	},
+	"set_bone_pose_rotation": {
+		"kind": "function",
+		"sig": "Skeleton3D.set_bone_pose_rotation(본, 쿼터니언)",
+		"desc": "본의 로컬 포즈 회전을 써 넣는다. 부모 본 기준이라\n월드 방향을 넣으려면 부모 공간으로 되돌려야 한다.\n흔들림 모디파이어의 출력이 결국 전부 이 한 줄로 나간다.",
+	},
+	"rotated": {
+		"kind": "function",
+		"sig": "Vector3.rotated(축, 라디안) -> Vector3",
+		"desc": "벡터를 축 둘레로 돌린 결과를 돌려준다.\n축은 길이 1이어야 한다.\n한계각을 넘은 방향을 울타리 안으로 되돌릴 때 쓴다.",
+	},
+	"clear_surfaces": {
+		"kind": "function",
+		"sig": "ArrayMesh.clear_surfaces()",
+		"desc": "메시의 서피스를 전부 비운다.\n매 프레임 천을 다시 굽는 쪽은\n비우고(clear) 다시 채우는(add) 두 줄이 한 세트다.",
+	},
+	"add_surface_from_arrays": {
+		"kind": "function",
+		"sig": "ArrayMesh.add_surface_from_arrays(방식, 배열들)",
+		"desc": "정점·법선·UV·인덱스 배열을 서피스 하나로 굽는다.\n배열을 복사하므로 공짜가 아니다 —\n천 챕터가 프레임 비용을 언급하는 이유.",
+	},
+	"TRIANGLES": {
+		"kind": "type",
+		"sig": "Mesh.PRIMITIVE_TRIANGLES — 상수 (칸이 좁아 축약)",
+		"desc": "배열을 삼각형 목록으로 읽으라는 뜻.\n인덱스 3개가 삼각형 하나다.",
+	},
+	"DOWN": {
+		"kind": "type",
+		"sig": "Vector3.DOWN — 상수 (0, -1, 0)",
+		"desc": "아래를 가리키는 단위 벡터.\n중력 방향을 숫자 대신 이름으로 적기 위한 것.",
+	},
 	"set_anchors_preset": {
 		"kind": "function",
 		"sig": "Control.set_anchors_preset(프리셋)",
@@ -401,6 +446,11 @@ const TERMS := {
 		"kind": "property",
 		"sig": "PlaneMesh.subdivide_depth — int",
 		"desc": "세로로 몇 번 더 쪼갤지.\nsubdivide_width의 짝. 둘 다 올려야 판이 고르게 촘촘해진다.",
+	},
+	"bone_name": {
+		"kind": "property",
+		"sig": "BoneAttachment3D.bone_name — String",
+		"desc": "이 노드가 따라다닐 본의 이름.\n본이 움직이면(모디파이어 출력 포함) 노드도 따라간다.\n이름이 한 글자라도 틀리면 에러 없이 조용히 안 붙는다.",
 	},
 	"shadow_enabled": {
 		"kind": "property",
