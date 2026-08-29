@@ -1,0 +1,133 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://waterfall/waterfall_world.gd" id="1_world"]
+[ext_resource type="Script" path="res://addons/pipeline_viz/runner/orbit_camera.gd" id="2_orbit"]
+[ext_resource type="Texture2D" path="res://waterfall/assets/cloudy_blue_sky.jpg" id="3_sky"]
+[ext_resource type="PackedScene" path="res://waterfall/assets/waterfall_scene.glb" id="4_scene"]
+[ext_resource type="Texture2D" path="res://waterfall/assets/glow.png" id="5_glow"]
+
+[sub_resource type="PanoramaSkyMaterial" id="sky_mat"]
+panorama = ExtResource("3_sky")
+
+[sub_resource type="Sky" id="sky"]
+sky_material = SubResource("sky_mat")
+
+[sub_resource type="Environment" id="env"]
+resource_local_to_scene = true
+background_mode = 2
+background_color = Color(0.07, 0.09, 0.12, 1)
+sky = SubResource("sky")
+sky_custom_fov = 39.9
+sky_rotation = Vector3(0, -0.549779, 0)
+tonemap_mode = 3
+tonemap_exposure = 0.8
+tonemap_white = 2.0
+
+[sub_resource type="Curve" id="curve_scale"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.442029, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="curve_tex"]
+curve = SubResource("curve_scale")
+
+[sub_resource type="ParticleProcessMaterial" id="mat_mist"]
+resource_local_to_scene = true
+lifetime_randomness = 1.0
+emission_shape_scale = Vector3(0.25, 0.25, 0)
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+velocity_pivot = Vector3(0, 1, 0)
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 2.0
+initial_velocity_max = 3.0
+scale_min = 0.13
+scale_max = 0.25
+scale_curve = SubResource("curve_tex")
+
+[sub_resource type="StandardMaterial3D" id="mat_mist_draw"]
+transparency = 1
+shading_mode = 0
+albedo_texture = ExtResource("5_glow")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="mesh_mist"]
+material = SubResource("mat_mist_draw")
+size = Vector2(0.25, 0.25)
+
+[sub_resource type="ParticleProcessMaterial" id="mat_foam"]
+resource_local_to_scene = true
+lifetime_randomness = 0.5
+emission_shape_scale = Vector3(0.15, 0, 0.1)
+emission_shape = 2
+emission_sphere_radius = 2.54
+direction = Vector3(0, 0, 0.5)
+spread = 30.0
+initial_velocity_min = 0.1
+initial_velocity_max = 0.5
+gravity = Vector3(0, -1, 0)
+damping_min = 0.5
+damping_max = 1.0
+scale_max = 1.5
+scale_curve = SubResource("curve_tex")
+
+[sub_resource type="StandardMaterial3D" id="mat_foam_draw"]
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 0.5
+
+[sub_resource type="SphereMesh" id="mesh_foam"]
+material = SubResource("mat_foam_draw")
+radius = 0.1
+height = 0.2
+
+[node name="WaterfallWorld" type="Node3D"]
+script = ExtResource("1_world")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("env")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.874411, 0.327287, -0.358174, -0.321611, 0.161753, 0.932954, 0.363279, 0.930978, -0.0361799, -3.0816, 0, 2.50121)
+shadow_enabled = true
+
+[node name="CameraRig" type="Node3D" parent="."]
+script = ExtResource("2_orbit")
+distance = 4.6
+min_distance = 1.2
+max_distance = 12.0
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.6)
+fov = 50.0
+near = 0.05
+
+[node name="WaterfallScene" parent="." instance=ExtResource("4_scene")]
+
+[node name="waterfall" parent="WaterfallScene" index="1"]
+transform = Transform3D(0.999987, -0.004838, 0.00165634, 0.00483806, 0.999988, -2.9676e-05, -0.00165618, 3.76755e-05, 0.999999, -0.0416546, -0.114094, -0.0467275)
+
+[node name="waterpuddle" parent="WaterfallScene" index="2"]
+transform = Transform3D(1.26685, 0, 0, 0, 1.26685, 0, 0, 0, 1.26685, 0, -0.895629, 0.293835)
+
+[node name="Effects" type="Node3D" parent="."]
+
+[node name="Mist" type="GPUParticles3D" parent="Effects"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.151694, 0.548823)
+amount = 256
+lifetime = 0.5
+fixed_fps = 60
+process_material = SubResource("mat_mist")
+draw_pass_1 = SubResource("mesh_mist")
+
+[node name="Foam" type="GPUParticles3D" parent="Effects"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0481549, 0.458227)
+amount = 256
+fixed_fps = 60
+process_material = SubResource("mat_foam")
+draw_pass_1 = SubResource("mesh_foam")
+
+[editable path="WaterfallScene"]

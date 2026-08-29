@@ -1,6 +1,6 @@
 # viz — 시각화 워크스루 웹 빌드
 
-Godot 프로젝트를 챕터 단위로 뜯어 보는 워크스루 다섯 개와, 그것을 웹으로
+Godot 프로젝트를 챕터 단위로 뜯어 보는 워크스루 여섯 개와, 그것을 웹으로
 내보내 GitHub Pages에 올리는 파이프라인.
 
 배포처: <https://CoEf.github.io/viz/>
@@ -12,6 +12,7 @@ Godot 프로젝트를 챕터 단위로 뜯어 보는 워크스루 다섯 개와,
 | `grass` | Grass Shaders Visualization | 지오메트리 · 바람 · 눌림 · 알파, 여섯 챕터 |
 | `rooms` | Rooms Connector Visualization | 들로네 삼각분할과 최소 신장 트리로 방 잇기 |
 | `ripple` | Water Shader Visualization | 형태 → 디테일 → 표면 → 부피 → 거품, 일곱 챕터 |
+| `waterfall` | Waterfall Visualization | 무대 → UV 스크롤 → 두 겹 곱 → 그라데이션 → 변위 → 웅덩이 → 파티클, 여덟 챕터 |
 
 slug는 배포 주소(`…/viz/<slug>/`)이자 블로그 본문 `::godot{src="…"}`가 무는
 값이다. 한 번 정하면 바꾸지 않는다 — 바꾸면 이미 나간 글의 임베드가 404가 된다.

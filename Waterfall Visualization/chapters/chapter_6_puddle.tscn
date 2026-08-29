@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://chapters/chapter_6_puddle.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://waterfall/waterfall_world.tscn" id="2_world"]
+
+[node name="Chapter6_puddle" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="WaterfallWorld" parent="." instance=ExtResource("2_world")]
