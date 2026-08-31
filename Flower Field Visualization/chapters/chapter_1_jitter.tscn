@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://chapters/chapter_1_jitter.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://field/scenes/field_world.tscn" id="2_world"]
+
+[node name="Chapter1Jitter" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="FieldWorld" parent="." instance=ExtResource("2_world")]

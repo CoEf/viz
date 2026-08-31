@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Shader" path="res://earth/materials/target_skin.gdshader" id="1_skin"]
+[ext_resource type="Script" path="res://earth/scripts/capsule_skin.gd" id="2_script"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_skin"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("1_skin")
+shader_parameter/albedo_color = Color(0.55, 0.55, 0.58, 1)
+shader_parameter/emission_color = Color(1, 0.6, 0.2, 1)
+shader_parameter/emission_strength = 2.0
+shader_parameter/emission_blend = 0.0
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_body"]
+radius = 0.35
+height = 1.4
+
+[node name="DummySkin" type="Node3D"]
+script = ExtResource("2_script")
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+material_override = SubResource("ShaderMaterial_skin")
+mesh = SubResource("CapsuleMesh_body")

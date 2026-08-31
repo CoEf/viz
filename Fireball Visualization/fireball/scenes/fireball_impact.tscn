@@ -1,0 +1,380 @@
+[gd_scene load_steps=39 format=3]
+
+[ext_resource type="Script" path="res://fireball/scripts/fireball_impact.gd" id="1_script"]
+[ext_resource type="Shader" path="res://fireball/materials/fireball_impact_trail.gdshader" id="1_trailshader"]
+[ext_resource type="Shader" path="res://fireball/materials/fireball_particles.gdshader" id="3_partshader"]
+[ext_resource type="Texture2D" path="res://fireball/materials/fire_particles_gradient.tres" id="4_grad"]
+[ext_resource type="Shader" path="res://fireball/materials/fireball_impact_flash.gdshader" id="4_flashshader"]
+[ext_resource type="Shader" path="res://fireball/materials/fire_smoke.gdshader" id="6_smokeshader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_trail"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("1_trailshader")
+
+[sub_resource type="Gradient" id="Gradient_trailramp"]
+offsets = PackedFloat32Array(0, 0.1, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_trailramp"]
+gradient = SubResource("Gradient_trailramp")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_trail"]
+resource_local_to_scene = true
+lifetime_randomness = 0.25
+direction = Vector3(0, 1, 0)
+spread = 35.0
+initial_velocity_min = 6.0
+initial_velocity_max = 16.0
+damping_min = 4.0
+damping_max = 6.0
+scale_min = 0.4
+color = Color(1, 0.435294, 0, 1)
+color_ramp = SubResource("GradientTexture1D_trailramp")
+collision_mode = 1
+collision_friction = 0.0
+collision_bounce = 0.45
+sub_emitter_mode = 1
+sub_emitter_frequency = 60.0
+
+[sub_resource type="Curve" id="Curve_ribbon"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="RibbonTrailMesh" id="RibbonTrailMesh_dkwft"]
+shape = 0
+size = 0.1
+section_length = 0.06
+curve = SubResource("Curve_ribbon")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_smoke"]
+noise_type = 2
+fractal_octaves = 2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_smoke"]
+seamless = true
+noise = SubResource("FastNoiseLite_smoke")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_smoke"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("6_smokeshader")
+shader_parameter/voronoi_sampler = SubResource("NoiseTexture2D_smoke")
+
+[sub_resource type="Gradient" id="Gradient_smokeramp"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_smokeramp"]
+gradient = SubResource("Gradient_smokeramp")
+
+[sub_resource type="Curve" id="Curve_smokescale"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(0.8, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_smokescale"]
+curve = SubResource("Curve_smokescale")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_smoke"]
+resource_local_to_scene = true
+lifetime_randomness = 0.1
+emission_shape = 1
+emission_sphere_radius = 0.15
+direction = Vector3(0, 1, 0)
+spread = 80.0
+initial_velocity_max = 0.4
+gravity = Vector3(0, 1, 0)
+scale_min = 0.8
+scale_max = 1.2
+scale_curve = SubResource("CurveTexture_smokescale")
+color = Color(0.780392, 0.780392, 0.780392, 0.470588)
+color_ramp = SubResource("GradientTexture1D_smokeramp")
+anim_speed_min = 0.01
+anim_speed_max = 0.02
+anim_offset_max = 1.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_smoke"]
+size = Vector2(0.5, 0.5)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_amber"]
+noise_type = 2
+fractal_octaves = 2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_amber"]
+seamless = true
+noise = SubResource("FastNoiseLite_amber")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_amber"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("3_partshader")
+shader_parameter/uv_scale = 0.3
+shader_parameter/voronoi_sampler = SubResource("NoiseTexture2D_amber")
+shader_parameter/gradient_sampler = ExtResource("4_grad")
+
+[sub_resource type="Gradient" id="Gradient_amberramp"]
+offsets = PackedFloat32Array(0, 0.2, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_amberramp"]
+gradient = SubResource("Gradient_amberramp")
+
+[sub_resource type="Curve" id="Curve_amberscale"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(0.4, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.2), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_amberscale"]
+curve = SubResource("Curve_amberscale")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_amber"]
+resource_local_to_scene = true
+lifetime_randomness = 0.4
+emission_shape = 1
+emission_sphere_radius = 0.15
+direction = Vector3(0, 1, 0)
+spread = 80.0
+initial_velocity_min = 0.4
+initial_velocity_max = 2.0
+gravity = Vector3(0, 1, 0)
+damping_min = 0.5
+damping_max = 1.0
+scale_min = 0.8
+scale_max = 1.2
+scale_curve = SubResource("CurveTexture_amberscale")
+color_ramp = SubResource("GradientTexture1D_amberramp")
+anim_speed_min = 0.1
+anim_speed_max = 0.1
+anim_offset_max = 1.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_amber"]
+size = Vector2(0.5, 0.5)
+
+[sub_resource type="Curve" id="Curve_spikes"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 1), 4.0, -4.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_offset"]
+_data = [Vector2(0, 0.8), 0.0, 0.0, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(0.5, 0.8), 0.0, 0.0, 0, 0, Vector2(0.7, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.8), 0.0, 0.0, 0, 0]
+point_count = 5
+
+[sub_resource type="CurveXYZTexture" id="CurveXYZTexture_flash"]
+curve_x = SubResource("Curve_spikes")
+curve_y = SubResource("Curve_offset")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_flash"]
+resource_local_to_scene = true
+render_priority = 1
+shader = ExtResource("4_flashshader")
+shader_parameter/base_color = Color(1, 0.745098, 0.360784, 1)
+shader_parameter/alpha = 1.0
+shader_parameter/intensity = 1.0
+shader_parameter/scale = 1.0
+shader_parameter/gradient_sampler = SubResource("CurveXYZTexture_flash")
+
+[sub_resource type="QuadMesh" id="QuadMesh_flash"]
+
+[sub_resource type="Animation" id="Animation_reset"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Anchor/FireTrail:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Anchor/FireSmoke:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Anchor/FireAmber:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Flash:material_override:shader_parameter/intensity")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Flash:material_override:shader_parameter/scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Flash:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_default"]
+resource_name = "default"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Anchor/FireTrail:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Anchor/FireSmoke:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Anchor/FireAmber:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Flash:material_override:shader_parameter/intensity")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.075),
+"transitions": PackedFloat32Array(-2, -2, -2),
+"update": 0,
+"values": [3.0, 4.0, 0.0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Flash:material_override:shader_parameter/scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.075),
+"transitions": PackedFloat32Array(-2, -2, -2),
+"update": 0,
+"values": [0.4, 1.25, 0.4]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Flash:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.075),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_impact"]
+_data = {
+"RESET": SubResource("Animation_reset"),
+"default": SubResource("Animation_default")
+}
+
+[node name="FireballImpact" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="Anchor" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+
+[node name="FireTrail" type="GPUParticles3D" parent="Anchor"]
+material_override = SubResource("ShaderMaterial_trail")
+emitting = false
+amount = 4
+lifetime = 0.6
+one_shot = true
+preprocess = 0.03
+explosiveness = 0.95
+transform_align = 3
+trail_enabled = true
+trail_lifetime = 0.2
+process_material = SubResource("ParticleProcessMaterial_trail")
+draw_pass_1 = SubResource("RibbonTrailMesh_dkwft")
+
+[node name="FireSmoke" type="GPUParticles3D" parent="Anchor"]
+material_override = SubResource("ShaderMaterial_smoke")
+emitting = false
+amount = 16
+lifetime = 1.2
+one_shot = true
+explosiveness = 0.8
+process_material = SubResource("ParticleProcessMaterial_smoke")
+draw_pass_1 = SubResource("QuadMesh_smoke")
+
+[node name="FireAmber" type="GPUParticles3D" parent="Anchor"]
+material_override = SubResource("ShaderMaterial_amber")
+emitting = false
+amount = 16
+lifetime = 0.6
+one_shot = true
+explosiveness = 0.8
+process_material = SubResource("ParticleProcessMaterial_amber")
+draw_pass_1 = SubResource("QuadMesh_amber")
+
+[node name="Flash" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+material_override = SubResource("ShaderMaterial_flash")
+mesh = SubResource("QuadMesh_flash")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+unique_name_in_owner = true
+libraries = {
+"": SubResource("AnimationLibrary_impact")
+}

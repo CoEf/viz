@@ -1,0 +1,168 @@
+[gd_scene load_steps=28 format=3]
+
+[ext_resource type="Script" path="res://fireball/scripts/fireball_world.gd" id="1_world"]
+[ext_resource type="PackedScene" path="res://fireball/scenes/fireball.tscn" id="2_fireball"]
+[ext_resource type="Shader" path="res://assets/ground_checkerboard.gdshader" id="3_ground"]
+[ext_resource type="Texture2D" path="res://assets/checkerboard.svg" id="4_checker"]
+[ext_resource type="Script" path="res://fireball/scripts/target.gd" id="5_target"]
+[ext_resource type="Script" path="res://fireball/scripts/capsule_skin.gd" id="6_skin"]
+[ext_resource type="Shader" path="res://fireball/materials/target_skin.gdshader" id="7_skinshader"]
+[ext_resource type="Script" path="res://fireball/scripts/hit_box_3d.gd" id="8_hitbox"]
+[ext_resource type="Shader" path="res://fireball/materials/fireball_particles.gdshader" id="9_partshader"]
+[ext_resource type="Texture2D" path="res://fireball/materials/fire_particles_gradient.tres" id="10_grad"]
+[ext_resource type="Shader" path="res://fireball/materials/fireball_impact_flash.gdshader" id="11_flashshader"]
+[ext_resource type="Script" path="res://fireball/scripts/trajectory_ribbons.gd" id="12_ribbons"]
+
+[sub_resource type="Environment" id="Environment_world"]
+resource_local_to_scene = true
+background_mode = 1
+background_color = Color(0.14902, 0.14902, 0.14902, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.368627, 0.368627, 0.368627, 1)
+tonemap_mode = 2
+glow_enabled = true
+glow_strength = 0.9
+fog_light_color = Color(0.14902, 0.14902, 0.14902, 1)
+fog_density = 0.04
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ground"]
+render_priority = 0
+shader = ExtResource("3_ground")
+shader_parameter/albedo_color = Color(0.2, 0.2, 0.2, 1)
+shader_parameter/uv_scale = 20.0
+shader_parameter/checkerboard_sampler = ExtResource("4_checker")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+size = Vector2(40, 40)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_skin"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("7_skinshader")
+shader_parameter/albedo_color = Color(0.55, 0.55, 0.58, 1)
+shader_parameter/emission_color = Color(1, 0.45, 0.1, 1)
+shader_parameter/emission_strength = 1.0
+shader_parameter/emission_blend = 0.0
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_target"]
+radius = 0.35
+height = 1.4
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_target"]
+height = 1.4
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_anatomy"]
+noise_type = 2
+fractal_octaves = 2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_anatomy"]
+seamless = true
+noise = SubResource("FastNoiseLite_anatomy")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_anatomy"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("9_partshader")
+shader_parameter/voronoi_sampler = SubResource("NoiseTexture2D_anatomy")
+shader_parameter/gradient_sampler = ExtResource("10_grad")
+shader_parameter/uv_scale = 0.3
+shader_parameter/demo_age = 0.3
+shader_parameter/demo_offset = 0.35
+
+[sub_resource type="QuadMesh" id="QuadMesh_anatomy"]
+size = Vector2(1.5, 1.5)
+
+[sub_resource type="Curve" id="Curve_spikes"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 1), 4.0, -4.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_offset"]
+_data = [Vector2(0, 0.8), 0.0, 0.0, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(0.5, 0.8), 0.0, 0.0, 0, 0, Vector2(0.7, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.8), 0.0, 0.0, 0, 0]
+point_count = 5
+
+[sub_resource type="CurveXYZTexture" id="CurveXYZTexture_flash"]
+curve_x = SubResource("Curve_spikes")
+curve_y = SubResource("Curve_offset")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_flashquad"]
+resource_local_to_scene = true
+render_priority = 1
+shader = ExtResource("11_flashshader")
+shader_parameter/base_color = Color(1, 0.745098, 0.360784, 1)
+shader_parameter/alpha = 1.0
+shader_parameter/intensity = 1.5
+shader_parameter/scale = 1.0
+shader_parameter/gradient_sampler = SubResource("CurveXYZTexture_flash")
+
+[sub_resource type="QuadMesh" id="QuadMesh_flashquad"]
+size = Vector2(2, 2)
+
+[node name="FireballWorld" type="Node3D"]
+script = ExtResource("1_world")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_world")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.906308, 0.298836, -0.298836, 0, 0.707107, 0.707107, 0.422618, -0.640856, 0.640856, 0, 0, 0)
+shadow_enabled = true
+directional_shadow_max_distance = 40.0
+directional_shadow_pancake_size = 10.0
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_ground")
+mesh = SubResource("PlaneMesh_ground")
+
+[node name="ParticlesCollision" type="GPUParticlesCollisionBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+size = Vector3(20, 1, 20)
+
+[node name="StationaryRig" type="Node3D" parent="."]
+transform = Transform3D(0, 0, 2, 0, 2, 0, -2, 0, 0, 0, 1.5, 0)
+
+[node name="Fireball" parent="StationaryRig" instance=ExtResource("2_fireball")]
+
+[node name="Launcher" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1, 0)
+
+[node name="ProjectileRoot" type="Node3D" parent="."]
+
+[node name="Target" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.8, 0)
+script = ExtResource("5_target")
+
+[node name="DummySkin" type="Node3D" parent="Target"]
+unique_name_in_owner = true
+script = ExtResource("6_skin")
+
+[node name="Mesh" type="MeshInstance3D" parent="Target/DummySkin"]
+material_override = SubResource("ShaderMaterial_skin")
+mesh = SubResource("CapsuleMesh_target")
+
+[node name="HitBox" type="Area3D" parent="Target"]
+unique_name_in_owner = true
+script = ExtResource("8_hitbox")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Target/HitBox"]
+shape = SubResource("CapsuleShape3D_target")
+
+[node name="ImpactAnchor" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.05, 0)
+
+[node name="AnatomyQuad" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+visible = false
+material_override = SubResource("ShaderMaterial_anatomy")
+mesh = SubResource("QuadMesh_anatomy")
+
+[node name="FlashQuad" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+visible = false
+material_override = SubResource("ShaderMaterial_flashquad")
+mesh = SubResource("QuadMesh_flashquad")
+
+[node name="TrajectoryRibbons" type="MeshInstance3D" parent="."]
+script = ExtResource("12_ribbons")
+
+[node name="AutofireTimer" type="Timer" parent="."]
+wait_time = 1.4

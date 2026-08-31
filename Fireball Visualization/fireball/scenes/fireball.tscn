@@ -1,0 +1,100 @@
+[gd_scene load_steps=19 format=3]
+
+[ext_resource type="Script" path="res://fireball/scripts/fireball.gd" id="1_script"]
+[ext_resource type="Material" path="res://fireball/materials/fireball_mat.tres" id="2_shellmat"]
+[ext_resource type="ArrayMesh" path="res://fireball/mesh/fireball_shell_mesh.obj" id="3_shellmesh"]
+[ext_resource type="Material" path="res://fireball/materials/fireball_fire_particles_mat.tres" id="5_firemat"]
+[ext_resource type="Shader" path="res://fireball/materials/fireball_core.gdshader" id="6_coreshader"]
+[ext_resource type="Material" path="res://fireball/materials/fireball_firetrail_particles_process.tres" id="6_trailproc"]
+[ext_resource type="Shader" path="res://fireball/materials/fire_smoke.gdshader" id="7_smokeshader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_core"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("6_coreshader")
+shader_parameter/albedo = Color(0.305882, 0.14902, 0.113725, 1)
+shader_parameter/emission = Color(0.984314, 0.301961, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_core"]
+radius = 0.4
+height = 0.8
+
+[sub_resource type="QuadMesh" id="QuadMesh_half"]
+size = Vector2(0.5, 0.5)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_smoke"]
+noise_type = 2
+fractal_octaves = 2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_smoke"]
+seamless = true
+noise = SubResource("FastNoiseLite_smoke")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_smoke"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("7_smokeshader")
+shader_parameter/voronoi_sampler = SubResource("NoiseTexture2D_smoke")
+
+[sub_resource type="Gradient" id="Gradient_smoke"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_smoke"]
+gradient = SubResource("Gradient_smoke")
+
+[sub_resource type="Curve" id="Curve_smoke"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(0.8, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_smoke"]
+curve = SubResource("Curve_smoke")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_smoke"]
+resource_local_to_scene = true
+lifetime_randomness = 0.1
+emission_shape = 1
+emission_sphere_radius = 0.15
+direction = Vector3(0, 0, -1)
+spread = 20.0
+gravity = Vector3(0, 1, 0)
+scale_min = 0.8
+scale_max = 1.2
+scale_curve = SubResource("CurveTexture_smoke")
+color = Color(0.780392, 0.780392, 0.780392, 0.470588)
+color_ramp = SubResource("GradientTexture1D_smoke")
+anim_speed_min = 0.01
+anim_speed_max = 0.02
+anim_offset_max = 1.0
+
+[node name="Fireball" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="FireballShellMesh" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(0.2, 0, 0, 0, -8.74228e-09, -0.2, 0, 0.2, -8.74228e-09, 0, 0, 0)
+material_override = ExtResource("2_shellmat")
+mesh = ExtResource("3_shellmesh")
+
+[node name="Core" type="MeshInstance3D" parent="FireballShellMesh"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_core")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_core")
+skeleton = NodePath("../..")
+
+[node name="FireTrail" type="GPUParticles3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.13)
+material_override = ExtResource("5_firemat")
+amount = 16
+lifetime = 0.5
+process_material = ExtResource("6_trailproc")
+draw_pass_1 = SubResource("QuadMesh_half")
+
+[node name="FireSmoke" type="GPUParticles3D" parent="."]
+unique_name_in_owner = true
+material_override = SubResource("ShaderMaterial_smoke")
+amount = 16
+explosiveness = 0.2
+process_material = SubResource("ParticleProcessMaterial_smoke")
+draw_pass_1 = SubResource("QuadMesh_half")

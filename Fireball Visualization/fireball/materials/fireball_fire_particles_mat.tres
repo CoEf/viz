@@ -1,0 +1,20 @@
+[gd_resource type="ShaderMaterial" load_steps=5 format=3]
+
+[ext_resource type="Shader" path="res://fireball/materials/fireball_particles.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://fireball/materials/fire_particles_gradient.tres" id="2_grad"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_dvc8t"]
+noise_type = 2
+fractal_octaves = 2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_dsewx"]
+noise = SubResource("FastNoiseLite_dvc8t")
+seamless = true
+
+[resource]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/voronoi_sampler = SubResource("NoiseTexture2D_dsewx")
+shader_parameter/gradient_sampler = ExtResource("2_grad")
+shader_parameter/uv_scale = 0.3

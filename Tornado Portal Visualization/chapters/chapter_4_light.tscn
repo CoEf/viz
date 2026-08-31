@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://chapters/chapter_4_light.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://tornado/scenes/tornado_world.tscn" id="2_world"]
+
+[node name="Chapter4Light" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="TornadoWorld" parent="." instance=ExtResource("2_world")]

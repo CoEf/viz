@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://chapters/chapter_2_camera.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://portalfx/scenes/portal_world.tscn" id="2_world"]
+
+[node name="Chapter2Camera" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="PortalWorld" parent="." instance=ExtResource("2_world")]

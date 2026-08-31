@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://chapters/chapter_4_cloth.gd" id="1_chapter"]
+[ext_resource type="Script" path="res://chapters/worlds/cloth_world.gd" id="2_world"]
+
+[node name="Chapter4Cloth" type="Node3D"]
+script = ExtResource("1_chapter")
+
+[node name="World" type="Node3D" parent="."]
+script = ExtResource("2_world")

@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://chapters/chapter_0_overview.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://earth/scenes/earth_world.tscn" id="2_world"]
+
+[node name="Chapter0Overview" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="EarthWorld" parent="." instance=ExtResource("2_world")]

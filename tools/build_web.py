@@ -33,42 +33,114 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-# slug → (프로젝트 폴더, 제목, 한 줄 설명)
+# ── 목록은 폴더가 정한다 ─────────────────────────────────────────────
+# 예전에는 여기에 딕셔너리를 손으로 적었다. 그러면 등록부가 셋이 된다 —
+# 폴더, 이 딕셔너리, 그리고 블로그의 walkthroughs.ts. 셋이 어긋나도 빌드는
+# 멀쩡히 통과하고 카드만 404가 되므로 아무도 모른다. 그래서 폴더를 유일한
+# 진실로 삼고 나머지를 여기서 만든다.
+#
+# CI는 체크아웃 위에서 돌기 때문에 "커밋된 것"과 "폴더에 있는 것"이 같다.
+# 즉 `git add`가 곧 발행 제스처다 — 아직 안 내놓을 것은 커밋을 안 하면 되고,
+# draft 플래그 같은 것을 따로 둘 필요가 없다.
+
 # slug는 배포 주소가 된다(…/viz/<slug>/). 블로그 본문의 ::godot{src="…"}가
-# 이 값을 그대로 쓰므로, 한 번 정한 뒤에는 바꾸지 않는다 — 바꾸면 이미 나간
+# 이 값을 그대로 쓰므로, 한 번 나간 뒤에는 바꾸지 않는다 — 바꾸면 이미 나간
 # 글의 임베드가 조용히 404가 된다.
-PROJECTS = {
-    "snow": (
-        "Snow Pipeline Visualization",
-        "눈 파이프라인",
-        "무대 → 눈발 → 쌓임 → 발자국 → 반짝임까지 일곱 챕터",
-    ),
-    "water": (
-        "Comunity Water Shaders Visualization",
-        "물 셰이더 열아홉 개",
-        "godotshaders.com에서 모은 물 셰이더를 한 무대에 올려 비교",
-    ),
-    "grass": (
-        "Grass Shaders Visualization",
-        "잔디 셰이더 열 개",
-        "지오메트리 · 바람 · 눌림 · 알파까지 여섯 챕터",
-    ),
-    "rooms": (
-        "Rooms Connector Visualization",
-        "방 잇기",
-        "들로네 삼각분할과 최소 신장 트리로 방을 연결",
-    ),
-    "ripple": (
-        "Water Shader Visualization",
-        "물결 시뮬레이션",
-        "형태 → 디테일 → 표면 → 부피 → 거품까지 일곱 챕터",
-    ),
-    "waterfall": (
-        "Waterfall Visualization",
-        "폭포",
-        "UV 스크롤 → 두 겹 곱 → 그라데이션 → 변위 → 파티클까지 여덟 챕터",
-    ),
+#
+# 아래 다섯은 규칙이 생기기 전에 손으로 정한 것이라 규칙에 맞출 수 없다.
+# ('Waterfall Visualization'은 규칙대로 해도 'waterfall'이라 여기 없다.)
+LEGACY_SLUGS = {
+    "Snow Pipeline Visualization": "snow",
+    "Comunity Water Shaders Visualization": "water",
+    "Water Shader Visualization": "ripple",
+    "Grass Shaders Visualization": "grass",
+    "Rooms Connector Visualization": "rooms",
 }
+
+# slug → 손으로 적는 산문. 폴더에서 유도할 수 없는 것은 이 셋뿐이다.
+#
+#   title    · 카드와 목차에 뜨는 이름
+#   note     · /viz/ 목차 카드의 한 줄 (짧게, 화살표로 줄기만)
+#   summary  · 블로그 워크스루 카드의 한 줄 (문장으로)
+#
+# note와 summary가 갈리는 이유는 읽는 자리가 다르기 때문이다 — /viz/ 목차는
+# 이미 들어온 사람이 고르는 자리라 줄기만 보면 되고, 블로그 카드는 처음 보는
+# 사람이 들어갈지 정하는 자리라 문장이 필요하다.
+#
+# **안 적어도 목록에서 빠지지 않는다** — 폴더 이름이 제목이 되고 나머지는 빈다.
+# 빠지게 만들면 '적어야 할 것'이 생기고, 그 순간부터 다시 밀리기 시작한다.
+LABELS = {
+    "snow": {
+        "title": "눈 파이프라인",
+        "note": "무대 → 눈발 → 쌓임 → 발자국 → 반짝임까지 일곱 챕터",
+        "summary": "무대에 눈을 내리고, 쌓고, 발자국을 남기고, 반짝이게 하기까지를 한 겹씩 켠다.",
+    },
+    "waterfall": {
+        "title": "폭포",
+        "note": "UV 스크롤 → 두 겹 곱 → 그라데이션 → 변위 → 파티클까지 여덟 챕터",
+        "summary": "UV 스크롤 두 겹을 곱해 물줄기를 만들고, 변위와 웅덩이와 파티클을 얹는다.",
+    },
+    "water": {
+        "title": "물 셰이더 열아홉 개",
+        "note": "godotshaders.com에서 모은 물 셰이더를 한 무대에 올려 비교",
+        "summary": "godotshaders.com에서 모은 물 셰이더를 한 무대에 올려, 파도·법선·깊이·굴절·거품을 축마다 비교한다.",
+    },
+    "ripple": {
+        "title": "물결 시뮬레이션",
+        "note": "형태 → 디테일 → 표면 → 부피 → 거품까지 일곱 챕터",
+        "summary": "형태에서 시작해 디테일·표면·부피·거품 순으로 물 한 덩이를 쌓아 올린다.",
+    },
+    "grass": {
+        "title": "잔디 셰이더 열 개",
+        "note": "지오메트리 · 바람 · 눌림 · 알파까지 여섯 챕터",
+        "summary": "블레이드 지오메트리부터 바람, 밟힘, 알파 처리까지 잔디밭을 이루는 결정들.",
+    },
+    "rooms": {
+        "title": "방 잇기",
+        "note": "들로네 삼각분할과 최소 신장 트리로 방을 연결",
+        "summary": "흩뿌린 방을 들로네 삼각분할로 잇고 최소 신장 트리로 추려, 던전 한 층의 연결을 만든다.",
+    },
+}
+
+
+def slugify(folder: str) -> str:
+    """폴더 이름에서 배포 주소를 만든다. 'Fireball Visualization' → 'fireball'."""
+    name = re.sub(r"\s+Visualization$", "", folder)
+    return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+
+
+def discover() -> dict:
+    """워크스루 프로젝트를 찾아 slug → (폴더, 제목, 한 줄)로 만든다.
+
+    셋을 다 갖춘 폴더만 센다: project.godot · addons/pipeline_viz · chapters.
+    러너가 없거나 챕터가 없으면 내보내 봐야 빈 화면이라, 목록에 있으면 안 된다.
+    """
+    found: dict = {}
+    origin: dict = {}
+    for path in sorted(p for p in ROOT.iterdir() if p.is_dir()):
+        if not (path / "project.godot").exists():
+            continue
+        if not (path / "addons" / "pipeline_viz").is_dir():
+            continue
+        if not any(path.glob("chapters/chapter_*.tscn")):
+            continue
+        slug = LEGACY_SLUGS.get(path.name) or slugify(path.name)
+        # 두 폴더가 같은 주소로 가면 하나가 조용히 덮인다. 이름을 바꾸라고 멈춘다.
+        if slug in found:
+            raise SystemExit(
+                f"[build_web] slug 충돌: '{slug}' ← {origin[slug]} · {path.name}"
+            )
+        label = LABELS.get(slug, {})
+        title = label.get("title") or path.name
+        note = label.get("note", "")
+        found[slug] = (path.name, title, note)
+        origin[slug] = path.name
+    if not found:
+        raise SystemExit("[build_web] 워크스루 프로젝트를 하나도 못 찾았다")
+    return found
+
+
+PROJECTS = discover()
 
 PRESET = "Web"
 
