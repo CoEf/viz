@@ -23,6 +23,7 @@
 from __future__ import annotations
 
 import argparse
+import codecs
 import hashlib
 import json
 import re
@@ -164,6 +165,29 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+# Godot의 텍스트 리소스 파서는 BOM을 못 넘긴다 — 첫 줄에서 "Expected '['"로 죽는다.
+# 그런데 로컬에는 .godot 임포트 캐시가 있어서 한 번 읽힌 씬은 다시 파싱되지 않으므로,
+# 이 오류는 체크아웃이 깨끗한 CI에서만 드러난다. 실제로 Drawable Painter의 챕터
+# 일곱이 그렇게 나갔다 — 로컬에서 스무 개를 다 내보내 놓고도 못 봤다.
+# 그래서 내보내기 전에 여기서 훑는다.
+BOM = codecs.BOM_UTF8
+TEXT_SUFFIXES = {".tscn", ".tres", ".gd", ".gdshader", ".gdshaderinc", ".cfg", ".import"}
+
+
+def check_bom(project: Path) -> list[Path]:
+    """BOM이 붙은 텍스트 리소스를 찾는다. .godot은 캐시라 보지 않는다."""
+    bad = []
+    for path in project.rglob("*"):
+        if path.suffix.lower() not in TEXT_SUFFIXES:
+            continue
+        if ".godot" in path.parts:
+            continue
+        with path.open("rb") as handle:
+            if handle.read(3) == BOM:
+                bad.append(path)
+    return bad
+
+
 def export(godot: str, project: Path, out: Path) -> None:
     """프로젝트 하나를 웹으로 내보낸다.
 
@@ -290,6 +314,13 @@ def main() -> None:
     for slug in slugs:
         folder = PROJECTS[slug][0]
         print(f"[build_web] {slug} ← {folder}", flush=True)
+        bad = check_bom(ROOT / folder)
+        if bad:
+            for path in bad:
+                print(f"  BOM: {path.relative_to(ROOT)}", file=sys.stderr)
+            raise SystemExit(
+                f"[build_web] {folder}: BOM이 붙은 텍스트 리소스 {len(bad)}개 — "
+                f"Godot 파서가 못 넘긴다")
         export(args.godot, ROOT / folder, staging / slug)
 
     # 공유의 전제를 확인한다. 다르면 프로젝트마다 다른 엔진이 필요하다는 뜻이고,
